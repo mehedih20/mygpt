@@ -34,7 +34,7 @@ const messagesApi = baseApi.injectEndpoints({
 
         return { data: {} };
       },
-      invalidatesTags: ["chat"],
+      invalidatesTags: ["messages"],
     }),
   }),
 });

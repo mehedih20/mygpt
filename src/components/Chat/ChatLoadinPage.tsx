@@ -1,41 +1,29 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { supabase } from "@/lib/supabaseClient";
+import { useCreateChatMutation } from "@/redux/features/chats/chatsApi";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const ChatLoadinPage = () => {
   const router = useRouter();
+  const chatId = localStorage.getItem("chatId");
+  const [createChatInDB] = useCreateChatMutation();
+
+  const createNewChat = async () => {
+    const data = await createChatInDB({}).unwrap();
+
+    const newChatId = data?.id;
+    localStorage.setItem("chatId", newChatId);
+    router.push(`/chat/${newChatId}`);
+  };
 
   useEffect(() => {
-    const chatId = localStorage.getItem("chatId");
-
-    const createNewChat = async () => {
-      const { data, error } = await supabase
-        .from("chats")
-        .insert([
-          {
-            chatName: "New Chat",
-          },
-        ])
-        .select("id")
-        .single();
-
-      if (error) {
-        console.error("Error creating chat:", error);
-        return;
-      }
-
-      const newChatId = data.id;
-      localStorage.setItem("chatId", newChatId);
-      router.push(`/chat/${newChatId}`);
-    };
-
     if (chatId) {
       router.push(`/chat/${chatId}`);
     } else {
       createNewChat();
     }
-  }, [router]);
+  }, []);
 
   return (
     <div className="w-full min-h-svh flex justify-center items-center">
