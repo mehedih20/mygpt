@@ -11,7 +11,7 @@ export default function Home() {
             excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
             a id nisi.
           </p>
-          <Link href="/chat" className="btn btn-warning animate-pulse">
+          <Link href="/chat" className="btn btn-info animate-pulse">
             Get Started
           </Link>
         </div>
