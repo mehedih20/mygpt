@@ -1,4 +1,5 @@
 "use client";
+import SingleChatMessage from "@/components/Chat/SingleChatMessage";
 import { supabase } from "@/lib/supabaseClient";
 import { model, generationConfig } from "@/lib/supbaseConfig";
 import {
@@ -19,6 +20,7 @@ const ChatPage = () => {
   const { id } = useParams();
   const router = useRouter();
   const [text, setText] = useState("");
+  const [isEditActive, setIsEditActive] = useState(false);
   const [chat, setChat] = useState<TChat[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -97,25 +99,16 @@ const ChatPage = () => {
         ref={scrollContainerRef}
         className="absolute top-5 w-full px-2 hide-scrollbar max-h-[85vh] overflow-y-scroll"
       >
-        {chat.map((msgObj, index) => {
-          return (
-            <div key={index} className="flex mb-5">
-              {msgObj.messageType === "response" && (
-                <span>
-                  <LiaAtomSolid className="text-xl mr-2 mt-0.5" />
-                </span>
-              )}
-              <p
-                className={`whitespace-pre-wrap ${
-                  msgObj.messageType === "question" &&
-                  "bg-gray-700 px-3 py-5 rounded-lg w-1/2 ml-auto"
-                }`}
-              >
-                {msgObj.text}
-              </p>
-            </div>
-          );
-        })}
+        {chat.map((msgObj, index) => (
+          <SingleChatMessage
+            msgObj={msgObj}
+            key={index}
+            handleFormSubmit={handleFormSubmit}
+            setText={setText}
+            text={text}
+            setIsEditActive={setIsEditActive}
+          />
+        ))}
         {isLoading && (
           <div className="flex mb-5">
             <span>
@@ -134,12 +127,12 @@ const ChatPage = () => {
             type="text"
             placeholder="input here.."
             className="bg-transparent px-3 focus:outline-none flex-1"
-            value={text}
+            value={isEditActive ? "" : text}
             onChange={(e) => setText(e.target.value)}
           />
           <button
             type="submit"
-            disabled={text === "" && true}
+            disabled={text === ""}
             className={`p-3 rounded-full ${
               text === "" ? "bg-gray-600" : "bg-gray-200"
             }`}

@@ -1,8 +1,7 @@
 import { LiaAtomSolid } from "react-icons/lia";
-// import ToggleTheme from "./ToggleTheme";
 import NavLinks from "./NavLinks";
 import dynamic from "next/dynamic";
-import { BsPencilSquare } from "react-icons/bs";
+import SidebarNewChat from "./SidebarNewChat";
 
 const Sidebar = async () => {
   const UserInfo = dynamic(() => import("./UserInfo"), {
@@ -16,10 +15,7 @@ const Sidebar = async () => {
           <LiaAtomSolid className="text-4xl mr-1" />
           <h2 className="text-2xl font-bold">MyGPT</h2>
         </div>
-        <button className="flex p-2 items-center gap-1 rounded-md justify-center hover:bg-gray-700  transition-colors duration-300 ease-in-out">
-          <BsPencilSquare className="text-2xl " />
-        </button>
-        {/* <ToggleTheme /> */}
+        <SidebarNewChat />
       </div>
       <NavLinks />
       <UserInfo />
