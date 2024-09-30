@@ -30,7 +30,7 @@ MyGPT is a web application created with the idea to clone the chatGPT web app.
 - Download or clone the project
 - Install NodeJs if not installed
 - Open the project and install node dependencies: npm install
-- Create a .env.local in the root of the project and include the following firebase credentials,
+- Create a .env.local in the root of the project and include the following credentials,
   - EXT_PUBLIC_CLERK_PUBLISHABLE_KEY
   - CLERK_SECRET_KEY
   - NEXT_PUBLIC_CLERK_SIGN_IN_URL
