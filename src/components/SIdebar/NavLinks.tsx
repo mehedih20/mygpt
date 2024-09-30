@@ -1,5 +1,6 @@
 "use client";
 import { useGetChatsQuery } from "@/redux/features/chats/chatsApi";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
 type TChat = {
@@ -9,7 +10,10 @@ type TChat = {
 };
 
 const NavLinks = () => {
-  const { data: chats } = useGetChatsQuery(undefined);
+  const { user } = useUser();
+  const { data: chats } = useGetChatsQuery(
+    user?.primaryEmailAddress?.emailAddress as string
+  );
 
   return (
     <div className="py-7">

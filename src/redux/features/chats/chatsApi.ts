@@ -4,8 +4,12 @@ import { baseApi } from "@/redux/api/baseApi";
 const chatsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getChats: builder.query({
-      async queryFn() {
-        const { data, error } = await supabase.from("chats").select("*");
+      async queryFn(email: string) {
+        const { data, error } = await supabase
+          .from("chats")
+          .select("*")
+          .eq("created_by", email);
+
         if (error) {
           console.error("Error fetching chats:", error);
         }
@@ -14,12 +18,13 @@ const chatsApi = baseApi.injectEndpoints({
       providesTags: ["chats"],
     }),
     createChat: builder.mutation({
-      async queryFn({}) {
+      async queryFn(email: string) {
         const { data, error } = await supabase
           .from("chats")
           .insert([
             {
               chatName: "New Chat",
+              created_by: email,
             },
           ])
           .select("id")

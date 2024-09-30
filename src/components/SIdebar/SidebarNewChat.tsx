@@ -1,5 +1,6 @@
 "use client";
 import { useCreateChatMutation } from "@/redux/features/chats/chatsApi";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { BsPencilSquare } from "react-icons/bs";
@@ -7,9 +8,12 @@ import { BsPencilSquare } from "react-icons/bs";
 const SidebarNewChat = () => {
   const [createChatInDB] = useCreateChatMutation();
   const router = useRouter();
+  const { user } = useUser();
 
   const createNewChat = async () => {
-    const data = await createChatInDB({}).unwrap();
+    const data = await createChatInDB(
+      user?.primaryEmailAddress?.emailAddress as string
+    ).unwrap();
 
     const newChatId = data?.id;
     localStorage.setItem("chatId", newChatId);

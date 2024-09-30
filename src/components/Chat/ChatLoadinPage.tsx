@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useCreateChatMutation } from "@/redux/features/chats/chatsApi";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useLayoutEffect, useRef } from "react";
 
@@ -8,9 +9,12 @@ const ChatLoadinPage = () => {
   const router = useRouter();
   const [createChatInDB] = useCreateChatMutation();
   const hasInitialized = useRef(false);
+  const { user } = useUser();
 
   const createNewChat = async () => {
-    const data = await createChatInDB({}).unwrap();
+    const data = await createChatInDB(
+      user?.primaryEmailAddress?.emailAddress as string
+    ).unwrap();
 
     const newChatId = data?.id;
     localStorage.setItem("chatId", newChatId);
