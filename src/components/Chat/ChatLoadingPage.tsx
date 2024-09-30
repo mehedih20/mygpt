@@ -9,9 +9,11 @@ const ChatLoadinPage = () => {
   const router = useRouter();
   const [createChatInDB] = useCreateChatMutation();
   const hasInitialized = useRef(false);
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
 
   const createNewChat = async () => {
+    if (!user?.primaryEmailAddress?.emailAddress) return;
+
     const data = await createChatInDB(
       user?.primaryEmailAddress?.emailAddress as string
     ).unwrap();
@@ -22,8 +24,8 @@ const ChatLoadinPage = () => {
   };
 
   useLayoutEffect(() => {
-    // Ensure this runs only once
-    if (!hasInitialized.current) {
+    // Ensure this runs only once and when the user is loaded
+    if (!hasInitialized.current && isLoaded) {
       hasInitialized.current = true;
 
       const chatId = localStorage.getItem("chatId");
@@ -33,7 +35,7 @@ const ChatLoadinPage = () => {
         createNewChat();
       }
     }
-  }, []);
+  }, [isLoaded]);
 
   return (
     <div className="w-full min-h-svh flex justify-center items-center">

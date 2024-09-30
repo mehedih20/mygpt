@@ -1,7 +1,7 @@
-import ChatLoadinPage from "@/components/Chat/ChatLoadinPage";
+import ChatLoadingPage from "@/components/Chat/ChatLoadingPage";
 
 const page = () => {
-  return <ChatLoadinPage />;
+  return <ChatLoadingPage />;
 };
 
 export default page;
