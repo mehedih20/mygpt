@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="hero bg-base-200 min-h-screen">
+    <div className="hero bg-base-200 min-h-svh">
       <div className="hero-content text-center">
         <div className="max-w-xl">
           <h2 className="text-6xl font-bold my-2">Welcome to MyGPT</h2>

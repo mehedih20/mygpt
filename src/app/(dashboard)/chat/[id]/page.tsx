@@ -1,8 +1,12 @@
 "use client";
 import { supabase } from "@/lib/supabaseClient";
 import { model, generationConfig } from "@/lib/supbaseConfig";
+import {
+  useCreateMessageMutation,
+  useGetMessagesQuery,
+} from "@/redux/features/messages/messagesApi";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaArrowUp } from "react-icons/fa";
 import { LiaAtomSolid } from "react-icons/lia";
 
@@ -16,7 +20,18 @@ const ChatPage = () => {
   const router = useRouter();
   const [text, setText] = useState("");
   const [chat, setChat] = useState<TChat[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const { data: messagesData } = useGetMessagesQuery(id as string);
+  const [createMessage] = useCreateMessageMutation();
+
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      const scrollHeight = scrollContainerRef.current.scrollHeight;
+      scrollContainerRef.current.scrollTop = scrollHeight;
+    }
+  }, [chat]);
 
   useEffect(() => {
     const checkId = async () => {
@@ -33,20 +48,10 @@ const ChatPage = () => {
   }, [id, router]);
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      const { data } = await supabase
-        .from("messages")
-        .select("messageType, text")
-        .eq("chatId", parseInt(id as string))
-        .order("created_at", { ascending: true });
-
-      if (data) {
-        setChat(data as TChat[]);
-        console.log(data);
-      }
-    };
-    fetchMessages();
-  }, []);
+    if (messagesData) {
+      setChat(messagesData);
+    }
+  }, [messagesData]);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,16 +59,14 @@ const ChatPage = () => {
     if (text !== "") {
       const chatText: string = text;
       setText("");
+      setIsLoading(true);
 
       setChat((prev) => [...prev, { messageType: "question", text: chatText }]);
-      setLoading(true);
-      await supabase.from("messages").insert([
-        {
-          messageType: "question",
-          text: chatText,
-          chatId: parseInt(id as string),
-        },
-      ]);
+      await createMessage({
+        messageType: "question",
+        text: chatText,
+        chatId: id as string,
+      });
 
       const chatSession = await model.startChat({
         generationConfig,
@@ -73,25 +76,27 @@ const ChatPage = () => {
       const result = await chatSession.sendMessage(text);
 
       if (result?.response) {
-        setLoading(false);
         setChat((prev) => [
           ...prev,
           { messageType: "response", text: result.response.text() },
         ]);
-        await supabase.from("messages").insert([
-          {
-            messageType: "response",
-            text: result.response.text(),
-            chatId: parseInt(id as string),
-          },
-        ]);
+
+        await createMessage({
+          messageType: "response",
+          text: result.response.text(),
+          chatId: id as string,
+        });
+        setIsLoading(false);
       }
     }
   };
 
   return (
-    <div className="min-h-screen w-full lg:w-[800px] mx-auto py-5 px-4 relative">
-      <div className="absolute top-5 w-full hide-scrollbar max-h-[85vh] overflow-y-scroll">
+    <div className="min-h-svh w-full lg:w-[800px] mx-auto pt-5 pb-2 md:pb-5 relative">
+      <div
+        ref={scrollContainerRef}
+        className="absolute top-5 w-full px-2 hide-scrollbar max-h-[85vh] overflow-y-scroll"
+      >
         {chat.map((msgObj, index) => {
           return (
             <div key={index} className="flex mb-5">
@@ -111,7 +116,7 @@ const ChatPage = () => {
             </div>
           );
         })}
-        {loading && (
+        {isLoading && (
           <div className="flex mb-5">
             <span>
               <LiaAtomSolid className="text-xl mr-2 mt-0.5" />
@@ -120,27 +125,29 @@ const ChatPage = () => {
           </div>
         )}
       </div>
-      <form
-        onSubmit={handleFormSubmit}
-        className="absolute left-0 bottom-5 w-full flex gap-2 border-2 border-gray-600 rounded-full p-2"
-      >
-        <input
-          type="text"
-          placeholder="input here.."
-          className="bg-transparent px-3 focus:outline-none flex-1"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-        <button
-          type="submit"
-          disabled={text === "" && true}
-          className={`p-3 rounded-full ${
-            text === "" ? "bg-gray-600" : "bg-gray-200"
-          }`}
+      <div className="absolute bottom-2 md:bottom-5 w-full px-2">
+        <form
+          onSubmit={handleFormSubmit}
+          className=" flex gap-2 border-2 border-gray-600 rounded-full p-1 md:p-2"
         >
-          <FaArrowUp className="text-lg text-gray-800" />
-        </button>
-      </form>
+          <input
+            type="text"
+            placeholder="input here.."
+            className="bg-transparent px-3 focus:outline-none flex-1"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <button
+            type="submit"
+            disabled={text === "" && true}
+            className={`p-3 rounded-full ${
+              text === "" ? "bg-gray-600" : "bg-gray-200"
+            }`}
+          >
+            <FaArrowUp className="text-lg text-gray-800" />
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

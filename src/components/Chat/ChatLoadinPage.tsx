@@ -38,7 +38,7 @@ const ChatLoadinPage = () => {
   }, [router]);
 
   return (
-    <div className="w-full min-h-screen flex justify-center items-center">
+    <div className="w-full min-h-svh flex justify-center items-center">
       <span className="loading loading-spinner loading-lg"></span>
     </div>
   );
