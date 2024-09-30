@@ -7,11 +7,12 @@ export default function Home() {
         <div className="max-w-xl">
           <h2 className="text-6xl font-bold my-2">Welcome to MyGPT</h2>
           <p className="py-6 text-lg">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-            excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
-            a id nisi.
+            MyGPT helps you with everything from answering questions to solving
+            problems, all in a conversational way. It&apos;s intuitive, learns
+            with you, and delivers personalized responses for seamless
+            interactions.
           </p>
-          <Link href="/chat" className="btn btn-info animate-pulse">
+          <Link href="/chat" className="btn btn-info">
             Get Started
           </Link>
         </div>
