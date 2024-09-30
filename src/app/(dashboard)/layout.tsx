@@ -9,7 +9,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         {children}
         <label
           htmlFor="my-drawer-2"
-          className="text-2xl bg-gray-800 rounded-full drawer-button lg:hidden absolute top-5 left-4 "
+          className="text-2xl bg-slate-900 p-1.5 rounded-xl drawer-button lg:hidden absolute top-4 left-2 "
         >
           <CiMenuFries />
         </label>

@@ -45,7 +45,7 @@ const SingleChatMessage = ({
       <div
         className={`relative whitespace-pre-wrap group ${
           msgObj.messageType === "question" &&
-          "bg-gray-700 px-3 py-6 rounded-lg w-1/2 ml-auto"
+          "bg-gray-700 px-3 py-6 rounded-lg w-4/5 md:w-1/2 ml-auto"
         }`}
       >
         {editChat ? (
@@ -80,7 +80,7 @@ const SingleChatMessage = ({
             {msgObj.messageType === "question" && (
               <button
                 onClick={() => setEditChat(true)}
-                className="absolute opacity-0 hover:text-gray-300 group-hover:opacity-100 top-0 right-0 btn-sm"
+                className="absolute text-gray-400 sm:text-gray-100 sm:opacity-0 hover:text-gray-300 group-hover:opacity-100 top-0 right-0 btn-sm"
               >
                 <FaPen />
               </button>

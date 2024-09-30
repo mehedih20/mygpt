@@ -2,12 +2,12 @@
 "use client";
 import { useCreateChatMutation } from "@/redux/features/chats/chatsApi";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 const ChatLoadinPage = () => {
   const router = useRouter();
-  const chatId = localStorage.getItem("chatId");
   const [createChatInDB] = useCreateChatMutation();
+  const hasInitialized = useRef(false);
 
   const createNewChat = async () => {
     const data = await createChatInDB({}).unwrap();
@@ -17,11 +17,17 @@ const ChatLoadinPage = () => {
     router.push(`/chat/${newChatId}`);
   };
 
-  useEffect(() => {
-    if (chatId) {
-      router.push(`/chat/${chatId}`);
-    } else {
-      createNewChat();
+  useLayoutEffect(() => {
+    // Ensure this runs only once
+    if (!hasInitialized.current) {
+      hasInitialized.current = true;
+
+      const chatId = localStorage.getItem("chatId");
+      if (chatId) {
+        router.push(`/chat/${chatId}`);
+      } else {
+        createNewChat();
+      }
     }
   }, []);
 
